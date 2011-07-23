@@ -1,6 +1,7 @@
 import random
 from random import randrange
 import os
+import math
 
 class ChurnSolver:
     cipher = ''
@@ -9,6 +10,8 @@ class ChurnSolver:
     tetragraphScores = []
     key = {}
     reverseKey = {}
+    expectedDigraph = {}
+    goodMutations = {}
     prb = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12,13,13,14,14,15,15,16,16,16,16,17,17,18,18,19,19,20,21,21,22,23,23,24,25,26,27,28,29,30,31,33,34,37,39,41,43,48,57,60]
     
     previousScore = 0
@@ -26,6 +29,7 @@ class ChurnSolver:
         self.loadDigraphScores()
         self.loadTetragraphScores()
         self.loadCiphertext()
+        self.loadExpected()
         
     def churn(self, cipher, iterations):
         self.bestKey = self.key
@@ -113,6 +117,45 @@ class ChurnSolver:
             str_list.append(self.alphabet[cph[1]])
         return ''.join(str_list)
 
+    def loadExpected(self):
+        f = open("../DigraphFrequencies.txt")
+        fc = f.read()
+        lines = fc.split("\n")
+        total = 0
+        for line in lines:
+            map = line.split("=")
+            key = map[0]
+            if(key == "total"):
+                total = int(map[1])
+                break
+        for line in lines:
+            map = line.split("=")
+            key = map[0]
+            val = map[1]
+            
+            keyTup = (self.alphabet.index(key[0]), self.alphabet.index(key[1]))
+            if(key != "total"):
+                self.expectedDigraph[keyTup] = float(val)/float(total)
+        
+    def createMutationTable(self):
+        self.goodMutations = {}
+        for i in range(26):
+            for j in range(26):
+                tup = (i, j)
+                print self.alphabet[tup[0]] + self.alphabet[tup[1]] + ": " + str(len([(x, y) for (x, y) in self.expectedDigraph if abs(self.expectedDigraph[(x,y)] - self.expectedDigraph[tup]) < 0.0001]))
+                if tup == (15, 0):
+                    print [self.tupToDigraph((x,y)) for (x, y) in self.expectedDigraph if abs(self.expectedDigraph[(x,y)] - self.expectedDigraph[tup]) < 0.0001]
+                    
+        print self.expectedDigraph[self.digraphToTup("pa")]
+                    
+    def digraphToTup(self, digraph):
+        return (self.alphabet.index(digraph[0]), self.alphabet.index(digraph[1]))
+    
+    def tupToDigraph(self, tup):
+        return self.alphabet[tup[0]] + self.alphabet[tup[1]]
+                
+            
+            
     
     
     
@@ -169,7 +212,6 @@ class ChurnSolver:
         mappings = fc.split("\n")
         for map in mappings:
             pair = map.split(":")
-            print pair[0][0]
             cph = (self.alphabet.index(pair[0][0]), self.alphabet.index(pair[0][1]))
             pln = (self.alphabet.index(pair[1][0]), self.alphabet.index(pair[1][1]))
             self.key[cph] = pln
@@ -193,7 +235,9 @@ class ChurnSolver:
         
 c = ChurnSolver()
 c.loadStartingKey()
-c.churn(c.cipher[0:600], 10000000)
+c.createMutationTable()
+
+#c.churn(c.cipher[0:600], 10000000)
 
 #pltx = "InPythonthestringobjectisimmutableeachtimeastringisassignedtoavariableanewobjectiscreatedinmemorytorepresentthenewvalueThiscontrastswithlanguageslikeperlandbasicwhereastringvariablecanbemodifiedinplaceThecommonoperationofconstructingalongstringoutofseveralshortsegmentsisnotveryefficientinPythonifyouusetheobviousapproachofappendingnewsegmentstotheendoftheexistingstringEachtimeyouappendtotheendofastringthePythoninterpretermustcreateanewstringobjectandcopythecontentsofboththeexistingstringandtheappendedstringintoitAsthestringsyouaremanipulatingbecomelargethisprocesbecomesincreasinglyslow".lower()
 #cph = c.encipher(pltx)
