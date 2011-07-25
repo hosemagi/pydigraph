@@ -24,7 +24,7 @@ class ChurnSolver:
     
     prb = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12,13,13,14,14,15,15,16,16,16,16,17,17,18,18,19,19,20,21,21,22,23,23,24,25,26,27,28,29,30,31,33,34,37,39,41,43,48,57,60]
     letterFrequencies = [0]*26
-    #trie = load_dictionary("../lwords.txt")
+    trie = load_dictionary("../lwords.txt")
     
     previousScore = 0
 
@@ -175,18 +175,18 @@ class ChurnSolver:
     def score(self, plaintext):
         
         score = 0
-        for i in range(len(plaintext) - 3):
+        #for i in range(len(plaintext) - 3):
             # tetragraph
-            index = self.alphabet.index(plaintext[i])*17576 + self.alphabet.index(plaintext[i+1])*676 + self.alphabet.index(plaintext[i+2])*26 + self.alphabet.index(plaintext[i+3])
-            score += self.tetragraphScores[index] * 0.8
+            #index = self.alphabet.index(plaintext[i])*17576 + self.alphabet.index(plaintext[i+1])*676 + self.alphabet.index(plaintext[i+2])*26 + self.alphabet.index(plaintext[i+3])
+            #score += self.tetragraphScores[index] * 0.8
             
             # digraph
             #index = self.alphabet.index(plaintext[i])*26 + self.alphabet.index(plaintext[i+1])
             #score += self.digraphScores[index] * 1.17
         
-        score = float(score)/float(len(plaintext))
+        #score = float(score)/float(len(plaintext))
         # trie
-        #score += self.trie.scanScore2(plaintext) * .3
+        score += self.trie.wordScore(plaintext) * .3
         score *= 110
         return score
     
@@ -394,27 +394,27 @@ class ChurnSolver:
         print "correct subs in mut table: " + str(correct/676.0)
         print "size/original size: " + str(total/(676.0*676.0))
 
-f = open("../warandpeace.txt")
-fc = f.read()
+#f = open("../warandpeace.txt")
+#fc = f.read()
 
-encipherer = ChurnSolver("asdfasdfasdfasdfasdf")
-encipherer.generateRandomKey()
-cipher = encipherer.encipher(fc)
+#encipherer = ChurnSolver("asdfasdfasdfasdfasdf")
+#encipherer.generateRandomKey()
+#cipher = encipherer.encipher(fc)
 
 #print cipher
 
 #print "*************************"
 
 
-#f = open("../cipher.txt")
-#fc = f.read()
-#cipher = fc
+f = open("../cipher.txt")
+fc = f.read()
+cipher = fc
 c = ChurnSolver(cipher)
 c.cipher = cipher[0:550]
 
-c.trueText = fc[0:550]
-c.targetScore = c.score(c.trueText)
-c.analyzeMutationTable(encipherer.key, c.goodMutations)
+#c.trueText = fc[0:550]
+#c.targetScore = c.score(c.trueText)
+#c.analyzeMutationTable(encipherer.key, c.goodMutations)
 
 #start = "enveedxbeprtgsnsthyonandeperaghitohqovndshauczkeyuwganosnoavmceagreliotoggstrissouteaghetxfoeianlechaselhljeheumhordqvwqxvaiichewepygwtuedodthhecbstinajallkufhkreareoqvpdseithosewyekqohahpriovlihaetbetindhipionthyodarecastesrhereekertinringmanaterafthmhessdstharemonwheditmialinanthchipajalinaispenderelohelxjseloyortaandroklihatierxbeyprerouteatinrigemyftgafhcmjytdowatezjshamderouteatakedweqdbfhetcfihkstovcaocamanowvsitoldshengitsefmarhiiratanheminberitstradereqqcerenookonetedarnerqnowaspenderewenxewehadslshhieqnepvhizvrnadnainpownznitrimeoranxbmffyatdwnindesledeeneoidormxmvmvvebeowmfczwamecrbranheestharpoonetedtothjraenowaytsgmbannehvndeadaiodsthennhnwhahkhosirvintoesrutiaytucoioaicoaehithasaswesludinpzczvsotasesaledgmpetathausieiiodhaenoiehaateafbesthorbgsidcelusewbhasyansrtzgffrdpweuadomereanithremchdomsianslotatamanhethaslothicrowroutaetavayetpetokthkeripvedroniotointonsomerboerateatedfoustwatharcwidonbeanmefostpithqvgihitathtothreenfoashxuzheslalbohohxrhergrbhdaesarowogsnorceirluna"
 #for i in range(len(cipher)-1):
@@ -423,7 +423,7 @@ c.analyzeMutationTable(encipherer.key, c.goodMutations)
 #    c.mutate(cph, pln)
 #print c.score(c.decipher(c.cipher))
 #c.startingKey = c.key.copy()
-print c.startingKey
+#print c.startingKey
 time.sleep(3)
 c.generateRandomKey()
 c.churn(c.cipher, 100000000)

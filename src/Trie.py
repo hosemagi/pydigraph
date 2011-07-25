@@ -104,7 +104,7 @@ class Node(object):
                 length = 1
             i += length
             score += length**2
-        return score
+        return float(score)/len(text) * 6
             
     
 def load_dictionary(path):
